@@ -1,122 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>osu! Circle</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>osu! Circle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+        }
+        .outline {
+            width: 200px;
+            height: 200px;
+            background-color: #000000;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            opacity: 1;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            background-color: #FF0000;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            opacity: 1;
+        }
 
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Ubuntu', sans-serif;
-        text-align: center;
-    }
-    .outline {
-        width: 200px;
-        height: 200px;
-        background-color: #000000;
-        border-radius: 50%;
-        position:absolute;
-        top:50%;
-        left:50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        opacity: 1;
-    }
-    .circle {
-        width: 100px;
-        height: 100px;
-        background-color: #FF0000;
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        opacity: 1;
-    }
-
-    .circle:hover {
-        background-color: #FF5555;
-    }
-</style>
+        .circle:hover {
+            background-color: #FF5555;
+        }
+    </style>
 </head>
 <body>
-<p>This is Wosu!</p> <!-- W stands for Website -->
-<p id="Acc"style="position: absolute; top: 50px; left: 50px;"> </p>
-<div class="outline" id="outline"></div>
-<div class="circle" id="circle" onclick="handleClick()"></div>
+    <p>This is Wosu!</p> <!-- W stands for Website -->
+    <div id="RealAcc" style="position: absolute; top: 10px; left: 20px;">Accuracy: NaN</div>
+    <p id="Acc" style="position: absolute; top: 50px; left: 50px;"> </p>
+    <div class="outline" id="outline"></div>
+    <div class="circle" id="circle" onclick="handleClick()"></div>
 
-<script>
-    let miss = false, didItStart = false
-    function randomInteger(max) {
-        return Math.floor(Math.random() * max);
-    }
-    var acc = document.getElementById("Acc");
-    let score = 0, x = 200, y = 200,opacity = 1,dy = 0.1;
-    function update() {
-        if (didItStart) {
-            document.getElementById("outline").style.width = x + "px";
-            document.getElementById("outline").style.height = y + "px";
-            x -= dy; // decrease width
-            y -= dy; // decrease height
-            if (dy<=11){
-            dy +=1
-            }
-            if (x <= 100 || y <= 100){
-                document.getElementById("outline").style.opacity = 0;
-                document.getElementById("circle").style.opacity = opacity;
-                opacity -= 0.05;
-                dy = 0.1
-                document.getElementById("circle").style.left = (parseFloat(document.getElementById("circle").style.left) + dy) + "%"; // Move to the right gradually
-                document.getElementById("circle").style.top = (parseFloat(document.getElementById("circle").style.top) + dy) + "%"; // Fall down gradually
-                if (dy<=1){
-                    dy += 0.1;
+    <script>
+        let successfulClicks = 0;
+        let totalClicks = 0;
+        let miss = false, didItStart = false;
+        let score = 0, x = 200, y = 200, opacity = 1, dy = 0.1;
+        const ac = document.getElementById("RealAcc");
+        const acc = document.getElementById("Acc");
+
+        function randomInteger(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function updateAccuracy() {
+            let accuracy = totalClicks > 0 ? (successfulClicks / totalClicks) * 100 : 0;
+            ac.textContent = "Accuracy: " + accuracy.toFixed(2) + "%";
+        }
+
+        function update() {
+            if (didItStart) {
+                document.getElementById("outline").style.width = x + "px";
+                document.getElementById("outline").style.height = y + "px";
+                x -= dy; // decrease width
+                y -= dy; // decrease height
+
+                if (dy <= 11) dy += 1;
+                if (x <= 100 || y <= 100) {
+                    dy = 0.1;
+                    document.getElementById("circle").style.left = (parseFloat(document.getElementById("circle").style.left) + dy) + "%";
+                    document.getElementById("circle").style.top = (parseFloat(document.getElementById("circle").style.top) + dy) + "%";
+                    if (dy <= 1) dy += 0.1;
+
+                    acc.style.top = document.getElementById("circle").style.top;
+                    acc.style.left = document.getElementById("circle").style.left;
+                    acc.textContent = "Miss!";
+                    miss = true;
                 }
-                acc.style.top = document.getElementById("circle").style.top;
-                acc.style.left = document.getElementById("circle").style.left;
-                acc.textContent = "Miss!";
-                miss = true;
             }
-        }
-        
-    }
-
-    function handleClick() {
-        didItStart = true;
-        if (document.getElementById("outline").style.width >= "200px" && document.getElementById("outline").style.height >= "200px"){
-            score += 0.5;
-        } else if(document.getElementById("outline").style.width <= "150px" && document.getElementById("outline").style.height <= "150px"){
-            score += 1;
-        } else if(x <=100 && y <=100){
-            score += 0;
-            console.log("Miss!")
-            acc.style.top = document.getElementById("circle").style.top;
-            acc.style.left = document.getElementById("circle").style.left;
-            acc.textContent = "Miss!";
+            requestAnimationFrame(update); // Smooth animation loop
         }
 
-        let rand = randomInteger(80) + "%"; // generate random position
-        if (!miss){
-            document.getElementById("circle").style.left = rand;
-            document.getElementById("circle").style.top = rand;
-            document.getElementById("outline").style.left = rand;
-            document.getElementById("outline").style.top = rand;
-        }     
-        x=200
-        y=200
-        dy = 0.1;
-        console.log(score);
-        update(); // call update to decrease outline size
-    }
+        function handleClick() {
+            totalClicks++;
+            miss = false;
+            didItStart = true;
+            if (!miss) {
+                successfulClicks++;
+                score += 1;
+            } else if (x <= 100 && y <= 100) {
+                score -= 1;
+                acc.textContent = "Miss!";
+            }
 
-    // Call the update function every second
-    setInterval(update, 100);
-</script>
+            updateAccuracy(); // Update accuracy display
+
+            let randX = randomInteger(window.innerWidth - 100);
+            let randY = randomInteger(window.innerHeight - 100);
+            document.getElementById("circle").style.left = randX + "px";
+            document.getElementById("circle").style.top = randY + "px";
+            document.getElementById("outline").style.left = randX + "px";
+            document.getElementById("outline").style.top = randY + "px";
+
+            x = 200;
+            y = 200;
+            dy = 0.1;
+
+            update(); // call update to decrease outline size
+        }
+
+        update(); // start the animation loop
+    </script>
 </body>
 </html>
-
