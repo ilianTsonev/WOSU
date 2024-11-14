@@ -75,7 +75,7 @@
                 x -= dy; // decrease width
                 y -= dy; // decrease height
 
-                if (dy <= 1) dy += 0.1;
+                if (dy <= 1) dy += 0.01;
                 if (x <= 100 || y <= 100) {
                     dy = 0.1;
                     document.getElementById("circle").style.left = (parseFloat(document.getElementById("circle").style.left) + dy) + "%";
